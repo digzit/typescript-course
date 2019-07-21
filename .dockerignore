@@ -1,0 +1,10 @@
+**/node_modules
+
+.prettierrc
+.DS_Store
+.git
+.idea
+
+README.md
+yarn-error.log
+docker-compose.yml
