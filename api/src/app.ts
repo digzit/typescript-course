@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as bodyParser from 'body-parser';
-import { Routes } from './routes/contact';
+import { Routes } from './routes';
 
 
 class App {

@@ -1,11 +1,11 @@
 {
   "name": "typescript-course",
   "version": "1.0.0",
-  "main": "index.js",
+  "private": true,
   "repository": "https://github.com/digzit/typescript-course.git",
   "author": "Digzit <aurelien.digout@gmail.com>",
-  "license": "MIT",
   "scripts": {
+    "api": "cd api && yarn dev",
     "prettier-watch": "onchange '**/*.ts' -- prettier --write {{changed}}"
   },
   "lint-staged": {
@@ -29,5 +29,9 @@
   },
   "engines": {
     "node": "10.16.0"
+  },
+  "dependencies": {
+    "env-cmd": "^9.0.3",
+    "ts-node": "^8.3.0"
   }
 }
