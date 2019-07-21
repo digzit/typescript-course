@@ -22,6 +22,8 @@ services:
   api:
     image: 'node:10.16-alpine'
     restart: always
+    links:
+      - mongo
     working_dir: /home/node/app
     environment:
       - API_PORT=${API_PORT}
