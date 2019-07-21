@@ -6,7 +6,7 @@
   "author": "Digzit <aurelien.digout@gmail.com>",
   "license": "MIT",
   "lint-staged": {
-    "*": [
+    ".ts": [
       "eslint --fix",
       "git add"
     ]
