@@ -5,9 +5,12 @@
   "repository": "https://github.com/digzit/typescript-course.git",
   "author": "Digzit <aurelien.digout@gmail.com>",
   "license": "MIT",
+  "scripts": {
+    "prettier-watch": "onchange '**/*.ts' -- prettier --write {{changed}}"
+  },
   "lint-staged": {
     ".ts": [
-      "eslint --fix",
+      "tslint --fix",
       "git add"
     ]
   },
@@ -17,10 +20,14 @@
     }
   },
   "devDependencies": {
-    "eslint": "^6.1.0",
-    "eslint-plugin-react": "^7.14.2",
     "husky": "^3.0.1",
     "lint-staged": "^9.2.0",
-    "prettier": "1.18.2"
+    "onchange": "^6.0.0",
+    "prettier": "1.18.2",
+    "tslint": "^5.18.0",
+    "typescript": "^3.5.3"
+  },
+  "engines": {
+    "node": "10.16.0"
   }
 }

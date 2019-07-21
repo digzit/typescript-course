@@ -1,0 +1,37 @@
+{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:all",
+    "tslint-config-prettier",
+    "tslint-plugin-prettier"
+  ],
+  "jsRules": {},
+  "rules": {
+    "prettier": true,
+    "increment-decrement": false,
+    "newline-before-return": false,
+    "no-parameter-properties": false,
+    "no-parameter-reassignment": false,
+    "no-unused-variable": false,
+    "typedef": false,
+    "unnecessary-else": false,
+    "no-any": false,
+    "strict-comparisons": false,
+    "triple-equals": {
+      "options": [
+        "allow-undefined-check"
+      ]
+    },
+    "no-console": {
+      "options": [
+        "log"
+      ]
+    }
+  },
+  "rulesDirectory": [],
+  "linterOptions": {
+    "exclude": [
+      "**/node_modules",
+    ]
+  },
+}
