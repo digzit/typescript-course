@@ -6,13 +6,11 @@
   "author": "Digzit <aurelien.digout@gmail.com>",
   "scripts": {
     "api": "cd api && yarn dev",
+    "admin": "cd admin && yarn start",
     "prettier-watch": "onchange '**/*.ts' -- prettier --write {{changed}}"
   },
   "lint-staged": {
-    "*.ts": [
-      "eslint --fix",
-      "git add"
-    ]
+    "*.ts": []
   },
   "husky": {
     "hooks": {
