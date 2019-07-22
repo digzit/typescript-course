@@ -9,7 +9,7 @@
     "prettier-watch": "onchange '**/*.ts' -- prettier --write {{changed}}"
   },
   "lint-staged": {
-    ".ts": [
+    "*.ts": [
       "eslint --fix",
       "git add"
     ]
