@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import Typography from '@material-ui/core/Typography';
 
 type DashboardProps = {}
 type DashboardState = {}
@@ -12,7 +13,9 @@ export default class Dashboard extends Component<DashboardProps, DashboardState>
 
   public render() {
     return (
-      <div>Dashboard</div>
+      <Typography component="h2" variant="h6" color="primary" gutterBottom>
+        Dashboard
+      </Typography>
     );
   }
 }
