@@ -22,6 +22,12 @@ class App {
     this.app.use(bodyParser.json());
     //support application/x-www-form-urlencoded post data
     this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(function(req, res, next) {
+      res.setHeader('Access-Control-Allow-Credentials', 'true');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE,OPTIONS');
+      res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept');
+    });
   }
 
   private mongoSetup(): void{
