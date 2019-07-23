@@ -7,10 +7,10 @@
   "scripts": {
     "api": "cd api && yarn dev",
     "admin": "cd admin && yarn start",
-    "prettier-watch": "onchange '**/*.ts' -- prettier --write {{changed}}"
+    "prettier-watch": "onchange '**/*.tsx' -- prettier --write {{changed}}"
   },
   "lint-staged": {
-    "*.ts": []
+    "*.tsx": []
   },
   "husky": {
     "hooks": {

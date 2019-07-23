@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
 
-import Link from '@material-ui/core/Link';
-import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -11,7 +9,6 @@ import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
-import Icon from '@material-ui/core/Icon';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Box from '@material-ui/core/Box';
 
@@ -24,10 +21,10 @@ function createData(id, firstName, lastName, email, phone, company) {
 }
 
 const rows = [
-  createData(0, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google'),
-  createData(0, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google'),
-  createData(0, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google'),
-  createData(0, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google')
+  createData(1, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google'),
+  createData(2, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google'),
+  createData(3, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google'),
+  createData(4, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google')
 ];
 
 export default class Contacts extends Component<ContactsProps, ContactState> {
