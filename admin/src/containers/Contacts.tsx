@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import queryString from 'query-string'
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -11,30 +12,141 @@ import AddIcon from '@material-ui/icons/Add';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Box from '@material-ui/core/Box';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
-type ContactsProps = {}
-type ContactState = {}
-
-
-function createData(id, firstName, lastName, email, phone, company) {
-  return { id, firstName, lastName, email, phone, company };
+enum actionType {
+  add = 'Add',
+  edit = 'Edit'
 }
 
-const rows = [
-  createData(1, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google'),
-  createData(2, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google'),
-  createData(3, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google'),
-  createData(4, 'John', 'Doe', 'blabla@gmail.com', 5145679837, 'Google')
-];
+interface ContactsProps {}
+interface ContactState {
+  contacts: Array<IContact>,
+  modalIsOpen: boolean,
+  action: string,
+  formData: any
+}
 
 export default class Contacts extends Component<ContactsProps, ContactState> {
 
   constructor(props : ContactsProps){
     super(props);
-    this.state = {}
+    this.state = {
+      contacts: [],
+      modalIsOpen: false,
+      action: '',
+      formData: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        company: '',
+        phone: ''
+      }
+    }
   }
 
+  componentDidMount() {
+    fetch('http://localhost:8080/contact')
+      .then(response => response.json())
+      .then(data => this.setState({contacts: data}))
+  }
+
+  handleAdd = () =>  {
+    this.setState({
+      action: actionType.add,
+      modalIsOpen: true
+    })
+  }
+
+  handleEdit = contact =>  {
+    this.setState({
+      action: actionType.edit,
+      modalIsOpen: true,
+      formData: contact
+    })
+  }
+
+  handleDelete = contactId => {
+    fetch('http://localhost:8080/contact/'+contactId, {
+      method: 'DELETE',
+    }).then(response => response.json())
+      .then(data => {
+        if(!data.errors) {
+          this.setState({
+            contacts: this.state.contacts.filter(row => row._id !== contactId),
+          })
+        }
+      })
+  }
+
+  handleSave = () => {
+    const { action, formData } = this.state
+    if(action === actionType.add) {
+      fetch('http://localhost:8080/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: queryString.stringify(formData)
+      }).then(response => response.json())
+        .then(data => {
+          if(!data.errors) {
+            this.setState({
+              contacts: [...this.state.contacts, data],
+            })
+          }
+        })
+    }
+    if(action === actionType.edit) {
+      fetch('http://localhost:8080/contact/'+formData._id, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
+        },
+        body: queryString.stringify(formData)
+      }).then(response => response.json())
+        .then(data => {
+          if(!data.errors) {
+            let newArray = this.state.contacts.filter(row => row._id !== formData._id)
+            newArray.push(formData)
+            this.setState({
+              contacts: newArray
+            })
+          }
+        })
+    }
+    this.setState({
+      formData: {
+        firstName: '',
+        lastName: '',
+        email: '',
+        company: '',
+        phone: ''
+      }
+    })
+    this.closeModal()
+  }
+
+  closeModal = () => {
+    this.setState({ modalIsOpen: false })
+  }
+
+  handleChange = event => {
+    this.setState({
+      formData: {
+        ...this.state.formData,
+        [event.target.name]: event.target.value
+      }
+    });
+  };
+
   public render() {
+    const { contacts, modalIsOpen, action, formData } = this.state
     return (
       <div>
         <Typography component="h2" variant="h6" color="primary" gutterBottom>
@@ -53,20 +165,20 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map(row => (
-              <TableRow key={row.id}>
+            {contacts.map(row => (
+              <TableRow key={row._id}>
                 <TableCell>{row.firstName}</TableCell>
                 <TableCell>{row.lastName}</TableCell>
                 <TableCell>{row.email}</TableCell>
-                <TableCell>{row.phone}</TableCell>
-                <TableCell >{row.company}</TableCell>
+                <TableCell>{row.company}</TableCell>
+                <TableCell >{row.phone}</TableCell>
                 <TableCell>
-                <Fab color="secondary" aria-label="Edit">
+                <Fab color="secondary" aria-label="Edit" onClick={() => this.handleEdit(row)}>
                   <EditIcon />
                 </Fab>
                 </TableCell>
                 <TableCell>
-                <Fab aria-label="Delete">
+                <Fab aria-label="Delete" onClick={() => this.handleDelete(row._id)}>
                   <DeleteIcon />
                 </Fab>
                 </TableCell>
@@ -75,10 +187,69 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
           </TableBody>
         </Table>
         <Box mt={3} mb={2}>
-          <Fab color="primary" aria-label="Add">
+          <Fab color="primary" aria-label="Add" onClick={this.handleAdd}>
             <AddIcon />
           </Fab>
         </Box>
+        <Dialog open={modalIsOpen} onClose={this.closeModal} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">{action}</DialogTitle>
+          <DialogContent>
+
+            <TextField
+              id="firstName"
+              name="firstName"
+              label="First name"
+              type="text"
+              fullWidth
+              value={formData.firstName}
+              onChange={this.handleChange}
+            />
+            <TextField
+              id="lastName"
+              name="lastName"
+              label="Last name"
+              type="text"
+              fullWidth
+              value={formData.lastName}
+              onChange={this.handleChange}
+            />
+            <TextField
+              id="email"
+              name="email"
+              label="Email"
+              type="email"
+              fullWidth
+              value={formData.email}
+              onChange={this.handleChange}
+            />
+            <TextField
+              id="company"
+              name="company"
+              label="Company"
+              type="text"
+              fullWidth
+              value={formData.company}
+              onChange={this.handleChange}
+            />
+            <TextField
+              id="phone"
+              name="phone"
+              label="Phone"
+              type="text"
+              fullWidth
+              value={formData.phone}
+              onChange={this.handleChange}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.closeModal} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleSave} color="primary">
+              Save
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
     );
   }
