@@ -12,7 +12,7 @@ Node: **node v.10.16.0** LTS [Node Version Manager](https://github.com/nvm-sh/nv
 After that, you have to install TypeScript and TypeScript Node.
 
 ```
-yarn add -g typescript ts-node
+npm install -g typescript ts-node
 ```
 
 ```
