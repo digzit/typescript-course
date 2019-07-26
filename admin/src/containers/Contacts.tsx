@@ -29,14 +29,7 @@ interface ContactState {
   contacts: Array<IContact>,
   modalIsOpen: boolean,
   action: string,
-  formData: {
-    _id?: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    company: string,
-    phone: number | null
-  }
+  formData: IContact
 }
 
 export default class Contacts extends Component<ContactsProps, ContactState> {
