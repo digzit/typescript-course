@@ -54,10 +54,6 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
     }
   }
 
-  constructor(props : ContactsProps){
-    super(props);
-  }
-
   componentDidMount() {
     fetch('http://localhost:8080/contact')
       .then(response => response.json())
