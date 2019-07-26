@@ -53,16 +53,17 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
       .then(data => this.setState({contacts: data}))
   }
 
-  cleanFormData(){
+  clearFormData(){
+    let myNewState: IContact = {
+      _id: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      company: '',
+      phone: null
+    };
     this.setState({
-      formData: {
-        _id: '',
-        firstName: '',
-        lastName: '',
-        email: '',
-        company: '',
-        phone: null
-      }
+      formData: myNewState
     })
   }
 
@@ -99,12 +100,13 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
     if(action === actionType.add) {
       let newState = Object.assign({}, formData)
       delete newState._id
+      let test: Exclude<IContact, '_id'> = newState
       fetch('http://localhost:8080/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
-        body: queryString.stringify(newState)
+        body: queryString.stringify(test)
       }).then(response => response.json())
         .then((data: IContact) => {
           this.setState({
@@ -128,7 +130,7 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
           })
         })
     }
-    this.cleanFormData()
+    this.clearFormData()
     this.closeModal()
   }
 
