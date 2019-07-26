@@ -4,5 +4,5 @@ interface IContact {
   lastName: string,
   email: string,
   company: string,
-  phone: any
+  phone: number | null
 }

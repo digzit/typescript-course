@@ -29,31 +29,52 @@ interface ContactState {
   contacts: Array<IContact>,
   modalIsOpen: boolean,
   action: string,
-  formData: any
+  formData: {
+    _id?: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    company: string,
+    phone: number | null
+  }
 }
 
 export default class Contacts extends Component<ContactsProps, ContactState> {
+  state = {
+    contacts: [],
+    modalIsOpen: false,
+    action: '',
+    formData: {
+      _id: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      company: '',
+      phone: null
+    }
+  }
 
   constructor(props : ContactsProps){
     super(props);
-    this.state = {
-      contacts: [],
-      modalIsOpen: false,
-      action: '',
-      formData: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        company: '',
-        phone: ''
-      }
-    }
   }
 
   componentDidMount() {
     fetch('http://localhost:8080/contact')
       .then(response => response.json())
       .then(data => this.setState({contacts: data}))
+  }
+
+  cleanFormData(){
+    this.setState({
+      formData: {
+        _id: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        company: '',
+        phone: null
+      }
+    })
   }
 
   handleAdd = () =>  {
@@ -63,7 +84,7 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
     })
   }
 
-  handleEdit = contact =>  {
+  handleEdit = (contact: IContact) =>  {
     this.setState({
       action: actionType.edit,
       modalIsOpen: true,
@@ -71,35 +92,35 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
     })
   }
 
-  handleDelete = contactId => {
-    fetch('http://localhost:8080/contact/'+contactId, {
+  handleDelete = (contactToDelete: IContact) => {
+    fetch('http://localhost:8080/contact/'+contactToDelete._id, {
       method: 'DELETE',
     }).then(response => response.json())
       .then(data => {
         if(!data.errors) {
           this.setState({
-            contacts: this.state.contacts.filter(row => row._id !== contactId),
+            contacts: this.state.contacts.filter((row: IContact) => row._id !== contactToDelete._id),
           })
         }
       })
   }
 
   handleSave = () => {
-    const { action, formData } = this.state
+    const { action, formData } = this.state;
     if(action === actionType.add) {
+      let newState = Object.assign({}, formData)
+      delete newState._id
       fetch('http://localhost:8080/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
         },
-        body: queryString.stringify(formData)
+        body: queryString.stringify(newState)
       }).then(response => response.json())
-        .then(data => {
-          if(!data.errors) {
-            this.setState({
-              contacts: [...this.state.contacts, data],
-            })
-          }
+        .then((data: IContact) => {
+          this.setState({
+            contacts: [...this.state.contacts, data]
+          })
         })
     }
     if(action === actionType.edit) {
@@ -111,24 +132,14 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
         body: queryString.stringify(formData)
       }).then(response => response.json())
         .then(data => {
-          if(!data.errors) {
-            let newArray = this.state.contacts.filter(row => row._id !== formData._id)
-            newArray.push(formData)
-            this.setState({
-              contacts: newArray
-            })
-          }
+          let newArray: Array<IContact> = this.state.contacts.filter((row: IContact) => row._id !== formData._id)
+          newArray.push(formData)
+          this.setState({
+            contacts: newArray
+          })
         })
     }
-    this.setState({
-      formData: {
-        firstName: '',
-        lastName: '',
-        email: '',
-        company: '',
-        phone: ''
-      }
-    })
+    this.cleanFormData()
     this.closeModal()
   }
 
@@ -158,14 +169,14 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
               <TableCell>First name</TableCell>
               <TableCell>Last name</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Company</TableCell>
               <TableCell>Phone</TableCell>
+              <TableCell>Company</TableCell>
               <TableCell>Edit</TableCell>
               <TableCell>Delete</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {contacts.map(row => (
+            {contacts.map((row: IContact) => (
               <TableRow key={row._id}>
                 <TableCell>{row.firstName}</TableCell>
                 <TableCell>{row.lastName}</TableCell>
@@ -178,7 +189,7 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
                 </Fab>
                 </TableCell>
                 <TableCell>
-                <Fab aria-label="Delete" onClick={() => this.handleDelete(row._id)}>
+                <Fab aria-label="Delete" onClick={() => this.handleDelete(row)}>
                   <DeleteIcon />
                 </Fab>
                 </TableCell>
@@ -235,7 +246,7 @@ export default class Contacts extends Component<ContactsProps, ContactState> {
               id="phone"
               name="phone"
               label="Phone"
-              type="text"
+              type="number"
               fullWidth
               value={formData.phone}
               onChange={this.handleChange}
